@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: minimalapi
-        image: ghcr.io/yar-zar/minimalapi:latest  # ဒီလိုင်းကို GitHub Actions က အလိုအလျောက် လဲလှယ်ပေးသွားမှာပါ
+        image: ghcr.io/Yar-Zar/MinimalApi:latest
         ports:
         - containerPort: 8080
         env:
