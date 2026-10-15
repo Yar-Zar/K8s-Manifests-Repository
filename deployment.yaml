@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: minimalapi-deployment
   namespace: default
+  labels:
+    app: minimalapi
 spec:
   replicas: 2
   selector:
@@ -21,6 +23,43 @@ spec:
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
+          
+        # --- PRO LEVEL HEALTH CHECKS ---
+        startupProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          failureThreshold: 30 # App စတက်ရန် စုစုပေါင်း ၁၅၀ စက္ကန့်အထိ အချိန်ပေးမည်
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 10
+          timeoutSeconds: 2
+          failureThreshold: 3
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 2
+          successThreshold: 1
+          failureThreshold: 3
+        # -------------------------------
+
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
 ---
 apiVersion: v1
 kind: Service
