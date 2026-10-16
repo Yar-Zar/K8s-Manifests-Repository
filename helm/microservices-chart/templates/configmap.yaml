@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "microservices-chart.fullname" . }}-config
+  labels:
+    {{- include "microservices-chart.labels" . | nindent 4 }}
+data:
+  {{- if .Values.configMap }}
+  {{- toYaml .Values.configMap | nindent 2 }}
+  {{- end }}
