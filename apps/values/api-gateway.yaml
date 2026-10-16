@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/yar-zar/api-gateway
-  tag: "c443f0ba9c3e062106aeb6939cc7e1bc3c688b3d"
+  tag: "c4bd0fb19fd73dcba63c4ba31b94485da27771e0"
   pullPolicy: IfNotPresent
   
   # YARP Destinations များကို Kubernetes Internal Service Names များဖြင့် Override လုပ်ခြင်း
