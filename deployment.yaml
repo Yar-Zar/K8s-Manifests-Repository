@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: minimalapi
-        image: ghcr.io/yar-zar/minimalapi:sha-8f6cd2a
+        image: ghcr.io/yar-zar/minimalapi:sha-80ed9df
         ports:
         - containerPort: 8080
         env:
