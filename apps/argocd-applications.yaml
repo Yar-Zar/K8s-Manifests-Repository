@@ -12,7 +12,7 @@ spec:
           - path: "apps/values/*.yaml"
   template:
     metadata:
-      name: '{{.path.basenameNormalized}}-app'
+      name: '{{ .path.filename | replace \".yaml\" \"\" }}-app'
       namespace: argocd
     spec:
       project: default
