@@ -1,11 +1,11 @@
 # Default values for microservices-chart.
-# This file contains production-ready defaults that you should review and tune for your workload.
+# Production-ready configuration for .NET 8 Microservices
 
 replicaCount: 2
 
 image:
-  repository: nginx
-  tag: stable
+  repository: ghcr.io/yar-zar/microservice-placeholder # Service တစ်ခုချင်းစီ၏ values ဖိုင်တွင် အစားထိုးမည်
+  tag: "latest"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -15,46 +15,46 @@ service:
   port: 80
   targetPort: 8080
 
-# Pod-level security context defaults. Override per-environment if needed.
+# Pod-level security context defaults
 podSecurityContext:
   runAsUser: 1000
   runAsGroup: 3000
   fsGroup: 2000
 
-# Container-level security context defaults.
+# Container-level security context defaults
 securityContext:
   allowPrivilegeEscalation: false
-  readOnlyRootFilesystem: true
+  readOnlyRootFilesystem: false  # .NET applications များအတွက် temp files ရေးရန် လိုအပ်နိုင်သဖြင့် false ထားခြင်းသည် ပိုအဆင်ပြေပါသည်
   capabilities:
     drop:
       - ALL
 
 resources:
   limits:
-    cpu: 250m
-    memory: 256Mi
+    cpu: 500m
+    memory: 512Mi
   requests:
     cpu: 100m
-    memory: 128Mi
+    memory: 256Mi
 
-# Horizontal Pod Autoscaler
+# Horizontal Pod Autoscaler (Production အတွက် enabled လုပ်ထားသည်)
 autoscaling:
-  enabled: false
+  enabled: true
   minReplicas: 2
   maxReplicas: 10
-  targetCPUUtilizationPercentage: 60
+  targetCPUUtilizationPercentage: 70
 
-# Probes: sensible defaults; tune for your application startup characteristics.
+# Probes (.NET 8 Health Checks များအတွက် သင့်လျော်သော path များ)
 probes:
   liveness:
-    path: /healthz
+    path: /health
     port: 8080
-    initialDelaySeconds: 30
+    initialDelaySeconds: 15
     periodSeconds: 10
     timeoutSeconds: 5
     failureThreshold: 3
   readiness:
-    path: /ready
+    path: /health
     port: 8080
     initialDelaySeconds: 5
     periodSeconds: 10
@@ -62,25 +62,21 @@ probes:
     failureThreshold: 3
   startup:
     enabled: true
-    path: /startup
+    path: /health
     port: 8080
-    initialDelaySeconds: 15
-    periodSeconds: 10
-    timeoutSeconds: 5
-    failureThreshold: 60
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    timeoutSeconds: 3
+    failureThreshold: 30
 
-# Environment variables. Use valueFrom for secrets/configMaps in production.
+# Environment variables
 env:
+  - name: ASPNETCORE_ENVIRONMENT
+    value: "Production"
   - name: LOG_LEVEL
-    value: "info"
-  # Example of secret-backed env var (uncomment and provide in values or override at deploy time)
-  # - name: DATABASE_URL
-  #   valueFrom:
-  #     secretKeyRef:
-  #       name: my-database-secret
-  #       key: database_url
+    value: "Information"
 
-# Node selector, tolerations and affinity for scheduling
+# Node selector, tolerations and affinity
 nodeSelector: {}
 affinity: {}
 tolerations: []
@@ -96,7 +92,7 @@ strategy:
     maxSurge: 25%
     maxUnavailable: 25%
 
-# Extra pod spec fields
+# Extra volumes and mounts
 extraVolumes: []
 extraVolumeMounts: []
 
@@ -104,5 +100,3 @@ extraVolumeMounts: []
 serviceAccount:
   create: true
   name: ""
-
-# Liveness/readiness/startup probe success/failure thresholds and other advanced options can be tuned per service using values.yaml overrides or via --set
