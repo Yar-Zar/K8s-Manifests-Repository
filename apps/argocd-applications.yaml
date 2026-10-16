@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: order-service-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/Yar-Zar/K8s-Manifests-Repository.git'
+    targetRevision: HEAD
+    path: 'helm/microservices-chart' # Helm chart တည်ရှိရာ path
+    helm:
+      valueFiles:
+        - '../../apps/values/order-service-values.yaml' # သက်ဆိုင်ရာ values ဖိုင် path
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: 'default'
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
