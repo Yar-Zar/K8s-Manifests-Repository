@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/yar-zar/order-service
-  tag: "latest"  # GitHub Actions က build လုပ်ပြီးတိုင်း commit sha ဖြင့် အလိုအလျောက် ပြောင်းလဲပေးမည်
+  tag: "7f5617bc383e30b1b5a3007088a02bab9884ad8c"
   pullPolicy: IfNotPresent
 
 service:
