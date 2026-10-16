@@ -9,10 +9,11 @@ spec:
         repoURL: https://github.com/Yar-Zar/K8s-Manifests-Repository
         revision: HEAD
         files:
-          - path: "apps/values/*-service.yaml"  # .gitkeep ပါမပါအောင် -service.yaml လို့ အတိအကျ သုံးပေးခြင်း
+          - path: "apps/values/*-service.yaml"
   template:
     metadata:
-      name: '{{.path.basenameNormalized}}-app'
+      # .path.filename (ဥပမာ order-service.yaml) ကနေ .yaml ကို ဖြုတ်ပြီး app နာမည်ဖန်တီးခြင်း
+      name: '{{- $fileName := .path.filename -}}{{- print (regexReplaceAll "\\.yaml$" $fileName "") -}}-app'
       namespace: argocd
     spec:
       project: default
@@ -22,7 +23,7 @@ spec:
         path: helm/microservices-chart
         helm:
           valueFiles:
-            - ../../{{.path.path}}  # Chart path (helm/microservices-chart) ကနေ back ဆုတ်ပြီး root က values ကို လှမ်းခေါ်ခြင်း
+            - ../../{{.path.path}}
       destination:
         server: https://kubernetes.default.svc
         namespace: default
