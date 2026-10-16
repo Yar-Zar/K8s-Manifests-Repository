@@ -1,20 +1,108 @@
-replicaCount: 1
+# Default values for microservices-chart.
+# This file contains production-ready defaults that you should review and tune for your workload.
+
+replicaCount: 2
 
 image:
   repository: nginx
   tag: stable
   pullPolicy: IfNotPresent
 
+imagePullSecrets: []
+
 service:
   type: ClusterIP
   port: 80
+  targetPort: 8080
 
-resources: {}
+# Pod-level security context defaults. Override per-environment if needed.
+podSecurityContext:
+  runAsUser: 1000
+  runAsGroup: 3000
+  fsGroup: 2000
 
-ingress:
+# Container-level security context defaults.
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+      - ALL
+
+resources:
+  limits:
+    cpu: 250m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+# Horizontal Pod Autoscaler
+autoscaling:
   enabled: false
-  annotations: {}
-  hosts:
-    - host: chart-example.local
-      paths: ["/"]
-  tls: []
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 60
+
+# Probes: sensible defaults; tune for your application startup characteristics.
+probes:
+  liveness:
+    path: /healthz
+    port: 8080
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readiness:
+    path: /ready
+    port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  startup:
+    enabled: true
+    path: /startup
+    port: 8080
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 60
+
+# Environment variables. Use valueFrom for secrets/configMaps in production.
+env:
+  - name: LOG_LEVEL
+    value: "info"
+  # Example of secret-backed env var (uncomment and provide in values or override at deploy time)
+  # - name: DATABASE_URL
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: my-database-secret
+  #       key: database_url
+
+# Node selector, tolerations and affinity for scheduling
+nodeSelector: {}
+affinity: {}
+tolerations: []
+
+# Pod annotations and labels
+podAnnotations: {}
+podLabels: {}
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 25%
+    maxUnavailable: 25%
+
+# Extra pod spec fields
+extraVolumes: []
+extraVolumeMounts: []
+
+# Service Account
+serviceAccount:
+  create: true
+  name: ""
+
+# Liveness/readiness/startup probe success/failure thresholds and other advanced options can be tuned per service using values.yaml overrides or via --set
