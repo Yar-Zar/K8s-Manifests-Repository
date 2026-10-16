@@ -9,7 +9,7 @@ spec:
         repoURL: https://github.com/Yar-Zar/K8s-Manifests-Repository
         revision: HEAD
         files:
-          - path: "apps/values/*-values.yaml"
+          - path: "apps/values/*.yaml"
   template:
     metadata:
       name: '{{.path.basenameNormalized}}-app'
