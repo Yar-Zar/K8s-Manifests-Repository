@@ -4,6 +4,17 @@ image:
   repository: ghcr.io/yar-zar/api-gateway
   tag: "c443f0ba9c3e062106aeb6939cc7e1bc3c688b3d"
   pullPolicy: IfNotPresent
+  
+  # YARP Destinations များကို Kubernetes Internal Service Names များဖြင့် Override လုပ်ခြင်း
+env:
+  - name: ReverseProxy__Clusters__order-cluster__Destinations__destination1__Address
+    value: "http://order-service"
+  - name: ReverseProxy__Clusters__payment-cluster__Destinations__destination1__Address
+    value: "http://payment-service"
+  - name: ReverseProxy__Clusters__product-cluster__Destinations__destination1__Address
+    value: "http://product-service"
+  - name: ReverseProxy__Clusters__user-cluster__Destinations__destination1__Address
+    value: "http://user-service"
 
 service:
   type: LoadBalancer  # Gateway ဖြစ်သည့်အတွက် ပြင်ပမှ ဝင်ရောက်နိုင်ရန် LoadBalancer သို့မဟုတ် Ingress သုံးရပါမည်
