@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: minimalapi-deployment
   namespace: default
+  labels:
+    app: minimalapi
 spec:
   replicas: 2
   selector:
@@ -21,6 +23,30 @@ spec:
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: "Production"
+        
+        # 1. Performance & Reliability: Resource Requests & Limits
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+
+        # 2. Reliability: Health Checks (Probes)
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 15
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
 ---
 apiVersion: v1
 kind: Service
@@ -35,3 +61,25 @@ spec:
     - port: 80
       targetPort: 8080
       nodePort: 30080
+
+---
+# 3. Scalability: Horizontal Pod Autoscaler (HPA)
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: minimalapi-hpa
+  namespace: default
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: minimalapi-deployment
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
