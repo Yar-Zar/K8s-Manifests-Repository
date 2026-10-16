@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: ghcr.io/yar-zar/product-service
-  tag: "19564230fad1f5b163ffdd1dc42d64276f364aa1"
+  tag: "e8c6727383d4380e26f5a683e03f6ab465e93c8c"
   pullPolicy: IfNotPresent
 
 service:
