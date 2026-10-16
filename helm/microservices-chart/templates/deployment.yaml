@@ -64,9 +64,9 @@ spec:
             {{- end }}
           volumeMounts: {{ toYaml .Values.extraVolumeMounts | nindent 12 }}
           resources:
-            {{ toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}
 
-          # Startup probe (optional)
+          # Startup probe
           {{- if .Values.probes.startup.enabled }}
           startupProbe:
             httpGet:
